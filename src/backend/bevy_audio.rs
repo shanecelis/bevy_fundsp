@@ -23,6 +23,14 @@ impl Decodable for DspSource {
 }
 
 impl rodio::Source for IterMono {
+
+    // fn next(&mut self) -> Option<Self::Item> {
+    //     Some(self.sample())
+    // }
+    // fn next(&mut self) -> Option<Self::Item> {
+
+
+    // }
     fn current_frame_len(&self) -> Option<usize> {
         None
     }

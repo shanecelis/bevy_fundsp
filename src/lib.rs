@@ -29,7 +29,10 @@
 //! [FunDSP]: https://github.com/SamiPerttu/fundsp
 //! [Bevy]: https://bevyengine.org/
 
-use bevy::asset::AssetApp;
+use bevy::{
+    ecs::world::{Command, World},
+    asset::AssetApp
+};
 use {
     backend::{Backend, DefaultBackend},
     bevy::prelude::{App, Plugin},
@@ -128,6 +131,18 @@ impl DspAppExt for App {
     }
 }
 
+pub struct Dsp<D>(pub D, pub SourceType);
+
+
+/// Add a graph to the dsp manager.
+impl<D: DspGraph> Command for Dsp<D> {
+    fn apply(self, world: &mut World) {
+        let mut dsp_manager = world.resource_mut::<DspManager>();
+
+        dsp_manager.add_graph(self.0, self.1);
+    }
+}
+
 static DEFAULT_SAMPLE_RATE: Lazy<f32> = Lazy::new(default_sample_rate);
 
 #[cfg(not(test))]
@@ -164,7 +179,7 @@ pub mod prelude {
             dsp_graph::DspGraph,
             dsp_manager::DspManager,
             dsp_source::{DspSource, Iter, IterMono, SourceType},
-            DspAppExt, DspPlugin,
+            DspAppExt, DspPlugin, Dsp,
         },
         fundsp::hacker32::*,
     };
